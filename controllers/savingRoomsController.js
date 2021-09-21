@@ -29,11 +29,16 @@ exports.createSavingRoom = async (req, res, next) => {
   }
 };
 exports.updateSavingRoom = async (req, res, next) => {
+  // check if owner
   try {
     const room = await SaveRoom.findById(req.params.roomId);
     if (room.startDate < Date.now()) {
       res.status(401).json("You can't update a room after it has started");
     }
+    if (room.author._id.toString() !== req.user._id.toString()) {
+      res.status(401).json("You can't update a room if you are not the author");
+    }
+
     const updatedRoom = await SaveRoom.findOneAndUpdate(
       req.params.roomId,
       req.body,
@@ -49,6 +54,9 @@ exports.deleteSavingRoom = async (req, res, next) => {
     const room = await SaveRoom.findById(req.params.roomId);
     if (room.startDate < Date.now()) {
       res.status(401).json("You can't delete a room after it has started");
+    }
+    if (room.author._id.toString() !== req.user._id.toString()) {
+      res.status(401).json("You can't delete a room if you are not the author");
     }
 
     await SaveRoom.findOneAndDelete({ id: req.params.roomId });
@@ -66,7 +74,7 @@ exports.joinSavingRoom = async (req, res, next) => {
     }
     const updateRoom = await SaveRoom.findOneAndUpdate(
       { _id: req.params.roomId },
-      { $push: { users: req.user } },
+      { $push: { users: req.user.id } },
       { new: true }
     );
     res.status(201).json(updateRoom);
@@ -84,7 +92,7 @@ exports.leaveSavingRoom = async (req, res, next) => {
 
     const updateRoom = await SaveRoom.findOneAndUpdate(
       { _id: req.params.roomId },
-      { $pull: { users: req.user } },
+      { $pull: { users: req.user.id } },
       { new: true }
     );
     res.status(201).json(updateRoom);
