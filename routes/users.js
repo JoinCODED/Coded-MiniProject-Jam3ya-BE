@@ -17,12 +17,12 @@ router.post(
   signin
 );
 router.post(
-  '/wallet/:userId',
+  '/wallet/',
   passport.authenticate('local', { session: false }),
   wallet
 );
 router.post(
-  '/update/:userId',
+  '/update/',
   passport.authenticate('local', { session: false }),
   userUpdate
 );
