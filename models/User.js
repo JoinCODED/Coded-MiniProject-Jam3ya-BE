@@ -14,6 +14,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    wallet: {
+      type: Number,
+      default: 100,
+    },
   },
   { timestamps: { createdAt: 'created_at' } }
 );
