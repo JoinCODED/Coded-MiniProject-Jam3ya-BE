@@ -17,13 +17,13 @@ router.post(
   signin
 );
 router.post(
-  '/wallet/',
-  passport.authenticate('local', { session: false }),
+  '/wallet',
+  passport.authenticate('jwt', { session: false }),
   wallet
 );
 router.post(
-  '/update/',
-  passport.authenticate('local', { session: false }),
+  '/update',
+  passport.authenticate('jwt', { session: false }),
   userUpdate
 );
 
