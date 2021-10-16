@@ -43,7 +43,9 @@ exports.updateSavingRoom = async (req, res, next) => {
       req.params.roomId,
       req.body,
       { new: true }
-    );
+    )
+      .populate('author')
+      .populate('users');
     res.status(201).json(updatedRoom);
   } catch (error) {
     next(error);
@@ -76,7 +78,9 @@ exports.joinSavingRoom = async (req, res, next) => {
       { _id: req.params.roomId },
       { $push: { users: req.user.id } },
       { new: true }
-    );
+    )
+      .populate('author')
+      .populate('users');
     res.status(201).json(updateRoom);
   } catch (error) {
     next(error);
@@ -94,7 +98,9 @@ exports.leaveSavingRoom = async (req, res, next) => {
       { _id: req.params.roomId },
       { $pull: { users: req.user.id } },
       { new: true }
-    );
+    )
+      .populate('author')
+      .populate('users');
     res.status(201).json(updateRoom);
   } catch (error) {
     next(error);
