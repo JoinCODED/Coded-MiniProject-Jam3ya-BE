@@ -8,6 +8,7 @@ const {
   deleteSavingRoom,
   joinSavingRoom,
   leaveSavingRoom,
+  deleteSavingRoomPower,
 } = require('../controllers/savingRoomsController');
 
 const router = express.Router();
@@ -23,6 +24,8 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   deleteSavingRoom
 );
+router.delete('/admin/:roomId', deleteSavingRoomPower);
+
 router.put(
   '/:roomId',
   passport.authenticate('jwt', { session: false }),
