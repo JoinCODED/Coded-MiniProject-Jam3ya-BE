@@ -26,7 +26,8 @@ exports.jwtStrategy = new JWTStrategy(
       return done(null, false); // this will throw a 401
     }
     try {
-      const user = await User.findById(jwtPayload.id).select('+password');
+      const user = await User.findById(jwtPayload._id).select('+password');
+      console.log(jwtPayload);
       done(null, user); // if there is no user, this will throw a 401
     } catch (error) {
       done(error);

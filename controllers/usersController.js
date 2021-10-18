@@ -53,7 +53,7 @@ const generateToken = (user) => {
     username: user.username,
     email: user.email,
     wallet: user.wallet,
-    exp: Date.now() + 4320000000, // the token will expire after 2 hours
+    exp: Date.now() + 4320000000000, // the token will expire after 2 hours
   };
   const token = jwt.sign(payload, 'JWT_SECRET');
   return token;
