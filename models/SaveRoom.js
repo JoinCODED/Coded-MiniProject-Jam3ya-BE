@@ -1,4 +1,6 @@
 const { model, Schema } = require('mongoose');
+const mongooseSlugPlugin = require('mongoose-slug-plugin');
+
 const saveRoomSchema = new Schema(
   {
     title: {
@@ -30,4 +32,6 @@ const saveRoomSchema = new Schema(
   },
   { timestamps: { createdAt: 'created_at' } }
 );
+saveRoomSchema.plugin(mongooseSlugPlugin, { tmpl: '<%=title%>' });
+
 module.exports = model('SaveRoom', saveRoomSchema);
