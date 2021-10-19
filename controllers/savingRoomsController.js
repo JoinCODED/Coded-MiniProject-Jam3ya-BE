@@ -40,7 +40,7 @@ exports.updateSavingRoom = async (req, res, next) => {
     }
 
     const updatedRoom = await SaveRoom.findOneAndUpdate(
-      req.params.roomId,
+      { _id: req.params.roomId },
       req.body,
       { new: true }
     )
