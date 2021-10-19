@@ -81,15 +81,16 @@ exports.joinSavingRoom = async (req, res, next) => {
     const room = await SaveRoom.findById(req.params.roomId);
     if (room.startDate < Date.now()) {
       res.status(401).json("You can't join a room after it has started");
+    } else {
+      const updateRoom = await SaveRoom.findOneAndUpdate(
+        { _id: req.params.roomId },
+        { $push: { users: req.user.id } },
+        { new: true }
+      )
+        .populate('author')
+        .populate('users');
+      res.status(201).json(updateRoom);
     }
-    const updateRoom = await SaveRoom.findOneAndUpdate(
-      { _id: req.params.roomId },
-      { $push: { users: req.user.id } },
-      { new: true }
-    )
-      .populate('author')
-      .populate('users');
-    res.status(201).json(updateRoom);
   } catch (error) {
     next(error);
   }
@@ -100,16 +101,16 @@ exports.leaveSavingRoom = async (req, res, next) => {
     const room = await SaveRoom.findById(req.params.roomId);
     if (room.startDate < Date.now()) {
       res.status(401).json("You can't leave a room after it has started");
+    } else {
+      const updateRoom = await SaveRoom.findOneAndUpdate(
+        { _id: req.params.roomId },
+        { $pull: { users: req.user.id } },
+        { new: true }
+      )
+        .populate('author')
+        .populate('users');
+      res.status(201).json(updateRoom);
     }
-
-    const updateRoom = await SaveRoom.findOneAndUpdate(
-      { _id: req.params.roomId },
-      { $pull: { users: req.user.id } },
-      { new: true }
-    )
-      .populate('author')
-      .populate('users');
-    res.status(201).json(updateRoom);
   } catch (error) {
     next(error);
   }
