@@ -32,21 +32,20 @@ exports.updateSavingRoom = async (req, res, next) => {
   // check if owner
   try {
     const room = await SaveRoom.findById(req.params.roomId);
-    if (room.startDate < Date.now()) {
+    if (new Date(room.startDate) < Date.now()) {
       res.status(401).json("You can't update a room after it has started");
-    }
-    if (room.author._id.toString() !== req.user._id.toString()) {
+    } else if (room.author._id.toString() !== req.user._id.toString()) {
       res.status(401).json("You can't update a room if you are not the author");
+    } else {
+      const updatedRoom = await SaveRoom.findOneAndUpdate(
+        { _id: req.params.roomId },
+        req.body,
+        { new: true }
+      )
+        .populate('author')
+        .populate('users');
+      res.status(201).json(updatedRoom);
     }
-
-    const updatedRoom = await SaveRoom.findOneAndUpdate(
-      { _id: req.params.roomId },
-      req.body,
-      { new: true }
-    )
-      .populate('author')
-      .populate('users');
-    res.status(201).json(updatedRoom);
   } catch (error) {
     next(error);
   }
@@ -54,15 +53,14 @@ exports.updateSavingRoom = async (req, res, next) => {
 exports.deleteSavingRoom = async (req, res, next) => {
   try {
     const room = await SaveRoom.findById(req.params.roomId);
-    if (room.startDate < Date.now()) {
+    if (new Date(room.startDate) < Date.now()) {
       res.status(401).json("You can't delete a room after it has started");
-    }
-    if (room.author._id.toString() !== req.user._id.toString()) {
+    } else if (room.author._id.toString() !== req.user._id.toString()) {
       res.status(401).json("You can't delete a room if you are not the author");
+    } else {
+      await SaveRoom.findOneAndDelete({ _id: req.params.roomId });
+      res.status(201).json('deleted');
     }
-
-    await SaveRoom.findOneAndDelete({ _id: req.params.roomId });
-    res.status(201).json('deleted');
   } catch (error) {
     next(error);
   }
@@ -79,17 +77,18 @@ exports.deleteSavingRoomPower = async (req, res, next) => {
 exports.joinSavingRoom = async (req, res, next) => {
   try {
     const room = await SaveRoom.findById(req.params.roomId);
-    if (room.startDate < Date.now()) {
+    if (new Date(room.startDate) < Date.now()) {
       res.status(401).json("You can't join a room after it has started");
+    } else {
+      const updateRoom = await SaveRoom.findOneAndUpdate(
+        { _id: req.params.roomId },
+        { $push: { users: req.user._id } },
+        { new: true }
+      )
+        .populate('author')
+        .populate('users');
+      res.status(201).json(updateRoom);
     }
-    const updateRoom = await SaveRoom.findOneAndUpdate(
-      { _id: req.params.roomId },
-      { $push: { users: req.user._id } },
-      { new: true }
-    )
-      .populate('author')
-      .populate('users');
-    res.status(201).json(updateRoom);
   } catch (error) {
     next(error);
   }
@@ -98,17 +97,18 @@ exports.joinSavingRoom = async (req, res, next) => {
 exports.leaveSavingRoom = async (req, res, next) => {
   try {
     const room = await SaveRoom.findById(req.params.roomId);
-    if (room.startDate < Date.now()) {
+    if (new Date(room.startDate) < Date.now()) {
       res.status(401).json("You can't leave a room after it has started");
+    } else {
+      const updateRoom = await SaveRoom.findOneAndUpdate(
+        { _id: req.params.roomId },
+        { $pull: { users: req.user._id } },
+        { new: true }
+      )
+        .populate('author')
+        .populate('users');
+      res.status(201).json(updateRoom);
     }
-    const updateRoom = await SaveRoom.findOneAndUpdate(
-      { _id: req.params.roomId },
-      { $pull: { users: req.user._id } },
-      { new: true }
-    )
-      .populate('author')
-      .populate('users');
-    res.status(201).json(updateRoom);
   } catch (error) {
     next(error);
   }
