@@ -18,11 +18,11 @@ exports.signin = async (req, res, next) => {
 exports.wallet = async (req, res, next) => {
   // check if owner
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       res.status(201).json('user not found');
     }
-    const updatedUser = await User.findOneAndUpdate(req.user.id, req.body, {
+    const updatedUser = await User.findOneAndUpdate(req.user._id, req.body, {
       new: true,
     });
     res.status(201).json(updatedUser);
@@ -34,11 +34,11 @@ exports.wallet = async (req, res, next) => {
 exports.userUpdate = async (req, res, next) => {
   // check if owner
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       res.status(201).json('user not found');
     }
-    const updatedUser = await User.findOneAndUpdate(req.user.id, req.body, {
+    const updatedUser = await User.findOneAndUpdate(req.user._id, req.body, {
       new: true,
     });
     res.status(201).json(updatedUser);
